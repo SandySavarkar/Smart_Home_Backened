@@ -21,8 +21,6 @@ exports.createUser = async (req, res) => {
       if (err)
         return res.status(INVELID_JSON).json(successResponseHandler(err));
       else {
-        console.log(result, "result");
-
         return res
           .status(SUCCESS)
           .json(successResponseHandler(result, "User Created Successfully"));
@@ -30,3 +28,11 @@ exports.createUser = async (req, res) => {
     });
   }
 };
+
+exports.getAllUser= async (req,res)=>{
+    const userData=await User.find({"is_deleted":false})
+    return res
+          .status(SUCCESS)
+          .json(successResponseHandler(userData, "All users"));
+
+}
