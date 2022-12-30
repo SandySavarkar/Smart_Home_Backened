@@ -65,9 +65,9 @@ io.on('connection', socket => {
 
   socket.on('pin_state', data => {
     console.log('data: ', data);
+    socket.to(data.devicesId.toString()).emit('pin_state', data);
     deviceController.updateDevicePin(data);
     historyController.CreateAndUpdateHistory(data);
-    socket.to(data.devicesId.toString()).emit('pin_state', data);
   });
   socket.on('message', function (msg) {
     console.log('message: ' + msg);
