@@ -1,5 +1,5 @@
 exports.SUCCESS = 200;
-exports.INVELID_JSON = 400;
+exports.INVELID_JSON = 401;
 
 exports.successResponseHandle = (data, message) => {
   return {

@@ -78,7 +78,12 @@ exports.userLogin = async (req, res) => {
     const user=await User.findOne({"email":req.body.email,"password":req.body.password})
     if(!user) return res
     .status(SUCCESS)
-    .json(successResponseHandle( "user not found"));
+    .json(successResponseHandle( {"message":"user not found"}));
+    if(req.body.type!==user.type){
+        return res
+        .status(401)
+        .json(errorResponseHandle("You have no rights",401));
+    }
     const token = jwt.sign({
         userId: user._id,
         name: user.name,
