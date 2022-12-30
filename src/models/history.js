@@ -1,10 +1,10 @@
 // import mongoose, { Schema } from 'mongoose';
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const historySchema = new mongoose.Schema(
   {
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    device_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Device' },
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    device_id: { type: mongoose.Schema.Types.ObjectId, ref: "Device" },
     pin_Id: {
       type: String,
     },
@@ -13,7 +13,6 @@ const historySchema = new mongoose.Schema(
     },
     switch_on_time: {
       type: Date,
-      default:Date.now(),
     },
     switch_off_time: {
       type: Date,
@@ -23,17 +22,20 @@ const historySchema = new mongoose.Schema(
       default: null,
     },
     cost: {
-      type: Number ,
-      default:0
+      type: Number,
+      default: 0,
     },
     consumptionWattPerHour: {
-      type: Number ,
-      default:0
+      type: Number,
+      default: 0,
+    },
+    defaultWattOfPin: {
+      type: Number,
     },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
-module.exports = mongoose.model('History', historySchema);
+module.exports = mongoose.model("History", historySchema);
