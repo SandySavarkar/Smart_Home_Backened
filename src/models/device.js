@@ -1,41 +1,58 @@
+// import mongoose from 'mongoose';
 const mongoose=require('mongoose')
 
-const deviceSchema= new mongoose.Schema({
-    serial_number:{type:String},
-    name:{type:String},
-    is_deleted:{type:Boolean,default:false},
-    pins:{
-        type:Array,
-        default:[
-            {
-              "pinId": 16,
-              "pinName": "D0",
-              "relatedManualPin": 2,
-              "relatedManualPinName": "D4",
-              "limit":'',
-              "watt":1000,
-              "status":false
-            },
-            {
-              "pinId": 14,
-              "pinName": "D5",
-              "relatedManualPin": 12,
-              "relatedManualPinName": "D6",
-              "limit":'',
-              "watt":1000,
-              "status":false
-            },
-            {
-              "pinId": 5,
-              "pinName": "D1",
-              "relatedManualPin": 0,
-              "relatedManualPinName": "D3",
-              "limit":'',
-              "watt":1000,
-              "status":false
-            }
-          ]
-    }
-},{timestamps:true})
+const deviceSchema =new mongoose.Schema({
+  serial_number: {
+    type: String,
+  },
+  name: {
+    type: String,
+  },
+  pins: {
+    type: Array,
+    default:[
+      {
+        "pinId": 5,
+        "pinName": "D1",
+        "relatedManualPin": 0,
+        "relatedManualPinName": "D3",
+        "status":false,
+        "scheduleStartDateTime":'',
+        "scheduleStopDateTime":'',
+        "watt":'',
+        "limit":''
+      },
+      {
+        "pinId": 14,
+        "pinName": "D5",
+        "relatedManualPin": 13,
+        "relatedManualPinName": "D7",
+        "status":false,
+        "scheduleStartDateTime":'',
+        "scheduleStopDateTime":'',
+        "watt":'',
+        "limit":''
+      },
+      {
+        "pinId": 16,
+        "pinName": "D0",
+        "relatedManualPin": 4,
+        "relatedManualPinName": "D2",
+        "status":false,
+        "scheduleStartDateTime":'',
+        "scheduleStopDateTime":'',
+        "watt":'',
+        "limit":''
+      }
+    ]
+  },
+  is_deleted:{
+    type: Boolean,
+    default:false
+  }
+},{
+    timestamps: true
+});
 
-module.exports=mongoose.model('Device',deviceSchema)
+module.exports  = mongoose.model('Device', deviceSchema);
+

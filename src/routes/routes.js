@@ -1,23 +1,28 @@
-const express = require("express");
-const deviceController = require("../controllers/device.controller");
-const userController = require("../controllers/user.controller");
-const historycontroller = require("../controllers/history.controller");
+// import express from 'express';
+const express = require('express');
+// import { getHardwareOnline } from '../controllers/registerHardwareControllers.js';
+const deviceController = require('../controllers/device.controller');
+const userController = require('../controllers/user.controller');
+const historyController = require('../controllers/history.controller');
 
 const router = express.Router();
 
-//User Controller
-router.post("/register/user", userController.createUser);
-router.get("/get_users", userController.getAllUser);
-router.put("/delete_user/:id", userController.deleteUser);
-router.put('/update_user/:id',userController.updateUser)
+router.post('/register/device', deviceController.deviceRegister);
+router.get('/getAllDevice', deviceController.getDevices);
+router.put('/updateDevice', deviceController.updateDevice);
+router.put('/deleteDevice', deviceController.deleteDevice);
+router.post('/register/user', userController.userRegister);
+router.get('/getAllUsers', userController.getUsers);
+router.get('/getMyDevice', userController.getUserDevice);
+router.put('/deleteUser', userController.deleteUser);
+router.put('/updatePin', deviceController.updateDevice);
+router.put('/scheduleTime', deviceController.scheduleTime);
+router.post('/getUserHistory', historyController.getHistory);
+router.get('/availableDevices', deviceController.getAvailableDevice);
 
-//Device Controller
-router.post("/register/device", deviceController.createDevice);
-router.put("/delete_device/:id", deviceController.deleteDevice);
-router.get("/get_my_device/:id", deviceController.usersDevice);
+router.post('/addHistory', historyController.CreateAndUpdateHistory);
 
+// router.post('/hardware/online', getHardwareOnline);
 
-//History Controller
-router.get("/getUserHistory", historycontroller.getHistory);
-
+// export default router;
 module.exports = router;

@@ -1,58 +1,58 @@
 const {
-  errorResponseHandler,
-  SUCCESS,
-  INVELID_JSON,
-  successResponseHandler,
-} = require("../helpers/response_json");
+    errorResponseHandle,
+    INVELID_JSON,
+    SUCCESS,
+    successResponseHandle,
+  } =require('../helpers/responceHendler.js') ;
 
-const Device = require("../models/device");
-const User = require("../models/user");
+const User=require('../models/users')
 
-exports.createUser = async (req, res) => {
-  const userData = await User.find({ email: req.body.email });
-  if (userData.length > 0)
-    return res
-      .status(INVELID_JSON)
-      .json(successResponseHandler({ message: "User already exist" }));
-  else {
-    const user = new User(req.body);
-    console.log(user, "user");
-    user.save(function (err, result) {
-      if (err)
-        return res.status(INVELID_JSON).json(successResponseHandler(err));
-      else {
-        return res
-          .status(SUCCESS)
-          .json(successResponseHandler(result, "User Created Successfully"));
-      }
-    });
-  }
+
+exports.userRegister = async(req, res) => {
+  const user_exist=await User.find({email:req.body.email})
+  if(user_exist.length>0) {
+      return res
+  .status(INVELID_JSON)
+  .json(successResponseHandle({ message: "User already exist" }));
+  } 
+  var user = new User(req.body);
+  await user.save(function (err, result) {
+    if (err) {
+      return res
+        .status(INVELID_JSON)
+        .json(successResponseHandle({ message: err.message }));
+    } else {
+      return res
+        .status(SUCCESS)
+        .json(successResponseHandle(result, 'User registered successfully'));
+    }
+  });
 };
 
-exports.getAllUser = async (req, res) => {
-  const userData = await User.find({ is_deleted: false }).populate("devices");
+exports.getUsers=async(req,res)=>{
+  const userData=await User.find({"id_deleted":false}).populate('devices')
   return res
-    .status(SUCCESS)
-    .json(successResponseHandler(userData, "All users"));
-};
+        .status(SUCCESS)
+        .json(successResponseHandle(userData, 'All users'))
+}
 
-exports.deleteUser = async (req, res) => {
-  const userData = await User.findOneAndUpdate(
-    { _id: req.params.id },
-    { $set: { is_deleted: true } }
-  );
+exports.getUserDevice=async(req,res)=>{
+  const myDevices=await User.find({_id:req.query.user_id},'devices').populate('devices')
   return res
-    .status(SUCCESS)
-    .json(successResponseHandler({ is_deleted: true }, "deleted user"));
-};
+        .status(SUCCESS)
+        .json(successResponseHandle(myDevices, 'my devices'))
+}
 
-exports.updateUser = async (req, res) => {
-  const userData = await User.findOneAndUpdate(
-    { _id: req.params.id },
-    { $set: req.body }
-  );
-  const userUpdatedData = await User.findOne({ _id: req.params.id });
-  return res
-    .status(SUCCESS)
-    .json(successResponseHandler(userUpdatedData, "updated user"));
+exports.deleteUser = (req,res) => {
+  User.findOneAndUpdate({_id:req.body.user_id}, {$set:{"is_deleted":true}}, function (error, data) {
+    if (error) {
+      return res
+        .status(INVELID_JSON)
+        .json(successResponseHandle({ message: error.message }));
+    } else {
+      return res
+        .status(SUCCESS)
+        .json(successResponseHandle(data, 'Delete successfully'));
+    }
+  });
 };

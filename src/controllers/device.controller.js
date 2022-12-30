@@ -1,51 +1,128 @@
 const {
-  errorResponseHandler,
-  SUCCESS,
+  errorResponseHandle,
   INVELID_JSON,
-  successResponseHandler,
-} = require("../helpers/response_json");
+  SUCCESS,
+  successResponseHandle,
+} = require('../helpers/responceHendler.js');
 
-const Device = require("../models/device");
-const User = require("../models/user");
+const Device = require('../models/device');
+const User = require('../models/users.js');
 
-exports.createDevice = async (req, res) => {
-  const DeviceData = await Device.find({
+exports.deviceRegister = async (req, res) => {
+  const serial_no_exist = await Device.find({
     serial_number: req.body.serial_number,
   });
-  if (DeviceData.length > 0)
+  if (serial_no_exist.length > 0) {
     return res
       .status(INVELID_JSON)
-      .json(successResponseHandler({ message: "Device already exist" }));
-  else {
-    let finalData = {
-      serial_number: req.body.serial_number,
-      name: "My new Device",
-    };
-    const device = new Device(finalData);
-    device.save(function (err, result) {
-      if (err)
-        return res.status(INVELID_JSON).json(successResponseHandler(err));
-      else
-        return res
-          .status(SUCCESS)
-          .json(successResponseHandler(result, "User Created Successfully"));
-    });
+      .json(successResponseHandle({ message: 'Device already exist' }));
   }
+  const insert_device_data = {
+    serial_number: req.body.serial_number,
+    name: 'my device',
+  };
+  const device = new Device(insert_device_data);
+
+  await device.save(function (error, data) {
+    if (error) {
+      return res
+        .status(INVELID_JSON)
+        .json(successResponseHandle({ message: error.message }));
+    } else {
+      return res
+        .status(SUCCESS)
+        .json(successResponseHandle(data, 'create successfully'));
+    }
+  });
 };
 
-exports.deleteDevice = async (req, res) => {
-    const deviceData = await Device.findOneAndUpdate(
-      { _id: req.params.id },
-      { $set: { is_deleted: true } }
-    );
-    return res
-      .status(SUCCESS)
-      .json(successResponseHandler({ is_deleted: true }, "deleted device"));
-  };
-
-  exports.usersDevice=async(req,res)=>{
-    const mydevice=await User.find({'_id':req.params.id},'devices').populate('devices')
-    return res
+exports.getDevices = async (req, res) => {
+  const deviceData = await Device.find({ is_deleted: false });
+  return res
     .status(SUCCESS)
-    .json(successResponseHandler(mydevice, "my devices"));
+    .json(successResponseHandle(deviceData, 'All Devices'));
+};
+
+exports.updateDevice = (req, res) => {
+  Device.findOneAndUpdate(
+    { serial_number: req.body.serial_number },
+    { $set: req.body },
+    function (error, data) {
+      if (error) {
+        return res
+          .status(INVELID_JSON)
+          .json(successResponseHandle({ message: error.message }));
+      } else {
+        return res
+          .status(SUCCESS)
+          .json(successResponseHandle(data, 'Update successfully'));
+      }
+    },
+  );
+};
+
+exports.deleteDevice = (req, res) => {
+  Device.findOneAndUpdate(
+    { _id: req.body.serial_number },
+    { $set: { is_deleted: true } },
+    function (error, data) {
+      if (error) {
+        return res
+          .status(INVELID_JSON)
+          .json(successResponseHandle({ message: error.message }));
+      } else {
+        return res
+          .status(SUCCESS)
+          .json(successResponseHandle(data, 'Delete successfully'));
+      }
+    },
+  );
+};
+
+exports.updateDevicePin = data => {
+  Device.updateOne(
+    { serial_number: data.serial_number, 'pins.pinId': data.pinId },
+    { $set: { 'pins.$.status': data.value } },
+  );
+};
+
+exports.scheduleTime = (req, res) => {
+  Device.updateOne(
+    { serial_number: req.body.serial_number, 'pins.pinId': req.body.pinId },
+    {
+      $set: {
+        'pins.$.scheduleStartDateTime': req.body.scheduleStartDateTime,
+        'pins.$.scheduleStopDateTime': req.body.scheduleStopDateTime,
+      },
+    },
+    function (error, data) {
+      if (error) {
+        return res
+          .status(INVELID_JSON)
+          .json(successResponseHandle({ message: error.message }));
+      } else {
+        return res
+          .status(SUCCESS)
+          .json(successResponseHandle(data, 'Schedule update successfully'));
+      }
+    },
+  );
+};
+
+exports.getAvailableDevice = async (req, res) => {
+  const deviceData = await Device.find({ is_deleted: false });
+  let newArray = [];
+  if (deviceData.length > 0) {
+    await Promise.all(
+      deviceData.map(async item => {
+        const userData = await User.aggregate([
+          { $match: { devices: item._id.toString() } },
+        ]);
+        if (userData.length == 0) await newArray.push(item);
+      }),
+    );
   }
+  return res
+    .status(SUCCESS)
+    .json(successResponseHandle(newArray, 'Available devices'));
+};
