@@ -19,14 +19,20 @@ exports.CreateAndUpdateHistory = async (data) => {
   // ]);
   // console.log(deviceData,"device");
   // data['user_id'] = userData[0]._id;
-  
+
   data["device_id"] = deviceData._id;
   if (data.value === false) {
+    myDevice = Object.values(deviceData.pins).filter(
+      (x) => x.pinId === data.pinId
+    );
+
     const history = new History({
       device_id: data.device_id,
       // user_id: data.user_id,
+      switch_on_time: new Date(),
       pin_Id: data.pinId,
       switch_off_time: null,
+      defaultWattOfPin: myDevice[0].watt,
     });
 
     history.save();
@@ -51,7 +57,7 @@ exports.CreateAndUpdateHistory = async (data) => {
 
     let myDevice = await Device.findOne(
       {
-        device_id: data.device_id,
+        _id: data.device_id,
       },
       "pins"
     );
@@ -96,7 +102,7 @@ exports.getHistory = async (req, res) => {
           let hoursDifference = (difference / (60 * 60))?.toFixed(3);
           let myDevice = await Device.findOne(
             {
-              device_id: req.body.device_id,
+              _id: req.body.device_id,
             },
             "pins"
           );

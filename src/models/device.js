@@ -20,7 +20,7 @@ const deviceSchema =new mongoose.Schema({
         "scheduleStartDateTime":'',
         "scheduleStopDateTime":'',
         "watt":1000,
-        "limit":''
+        "limit":5
       },
       {
         "pinId": 14,
@@ -31,7 +31,7 @@ const deviceSchema =new mongoose.Schema({
         "scheduleStartDateTime":'',
         "scheduleStopDateTime":'',
         "watt":1000,
-        "limit":''
+        "limit":5
       },
       {
         "pinId": 16,
@@ -42,7 +42,7 @@ const deviceSchema =new mongoose.Schema({
         "scheduleStartDateTime":'',
         "scheduleStopDateTime":'',
         "watt":1000,
-        "limit":''
+        "limit":5
       }
     ]
   },
