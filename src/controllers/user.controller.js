@@ -34,5 +34,11 @@ exports.getAllUser= async (req,res)=>{
     return res
           .status(SUCCESS)
           .json(successResponseHandler(userData, "All users"));
+}
 
+exports.deleteUser= async (req,res)=>{
+    const userData=await User.findOneAndUpdate({"_id":req.params.id},{$set: { "is_deleted":true }})
+    return res
+          .status(SUCCESS)
+          .json(successResponseHandler(userData, "deleted user"));
 }
