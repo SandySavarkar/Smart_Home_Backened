@@ -36,17 +36,23 @@ exports.getAllUser = async (req, res) => {
     .json(successResponseHandler(userData, "All users"));
 };
 
-exports.deleteUser= async (req,res)=>{
-    const userData=await User.findOneAndUpdate({"_id":req.params.id},{$set: { "is_deleted":true }})
-    return res
-          .status(SUCCESS)
-          .json(successResponseHandler({ "is_deleted":true }, "deleted user"));
-}
+exports.deleteUser = async (req, res) => {
+  const userData = await User.findOneAndUpdate(
+    { _id: req.params.id },
+    { $set: { is_deleted: true } }
+  );
+  return res
+    .status(SUCCESS)
+    .json(successResponseHandler({ is_deleted: true }, "deleted user"));
+};
 
-exports.updateUser= async (req,res)=>{
-    const userData=await User.findOneAndUpdate({"_id":req.params.id},{$set: req.body})
-    const userUpdatedData=await User.findOne({"_id":req.params.id})
-    return res
-          .status(SUCCESS)
-          .json(successResponseHandler(userUpdatedData, "updated user"));
-}
+exports.updateUser = async (req, res) => {
+  const userData = await User.findOneAndUpdate(
+    { _id: req.params.id },
+    { $set: req.body }
+  );
+  const userUpdatedData = await User.findOne({ _id: req.params.id });
+  return res
+    .status(SUCCESS)
+    .json(successResponseHandler(userUpdatedData, "updated user"));
+};
