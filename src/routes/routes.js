@@ -21,6 +21,7 @@ router.get('/getAllDevice', deviceController.getDevices);
 router.put('/updateDevice', deviceController.updateDevice);
 router.put('/deleteDevice', deviceController.deleteDevice);
 router.get('/availableDevices', deviceController.getAvailableDevice);
+router.put('/updateDevicePinData',deviceController.updateDevicePinData)
 
 // router.put('/updateDevicePinData', deviceController.up);
 
