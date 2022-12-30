@@ -14,6 +14,8 @@ router.put('/update_user/:id',userController.updateUser)
 //Device Controller
 router.post("/register/device", deviceController.createDevice);
 router.put("/delete_device/:id", deviceController.deleteDevice);
+router.get("/get_my_device/:id", deviceController.usersDevice);
+
 
 //History Controller
 router.get("/getUserHistory", historycontroller.getHistory);
