@@ -32,3 +32,13 @@ exports.createDevice = async (req, res) => {
     });
   }
 };
+
+exports.deleteDevice = async (req, res) => {
+    const deviceData = await Device.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: { is_deleted: true } }
+    );
+    return res
+      .status(SUCCESS)
+      .json(successResponseHandler({ is_deleted: true }, "deleted device"));
+  };

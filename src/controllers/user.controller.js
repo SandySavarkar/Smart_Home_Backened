@@ -10,7 +10,7 @@ const User = require("../models/user");
 
 exports.createUser = async (req, res) => {
   const userData = await User.find({ email: req.body.email });
-  if (userData.length>0)
+  if (userData.length > 0)
     return res
       .status(INVELID_JSON)
       .json(successResponseHandler({ message: "User already exist" }));
@@ -29,16 +29,19 @@ exports.createUser = async (req, res) => {
   }
 };
 
-exports.getAllUser= async (req,res)=>{
-    const userData=await User.find({"is_deleted":false}).populate("devices")
-    return res
-          .status(SUCCESS)
-          .json(successResponseHandler(userData, "All users"));
-}
+exports.getAllUser = async (req, res) => {
+  const userData = await User.find({ is_deleted: false }).populate("devices");
+  return res
+    .status(SUCCESS)
+    .json(successResponseHandler(userData, "All users"));
+};
 
-exports.deleteUser= async (req,res)=>{
-    const userData=await User.findOneAndUpdate({"_id":req.params.id},{$set: { "is_deleted":true }})
-    return res
-          .status(SUCCESS)
-          .json(successResponseHandler(userData, "deleted user"));
-}
+exports.deleteUser = async (req, res) => {
+  const userData = await User.findOneAndUpdate(
+    { _id: req.params.id },
+    { $set: { is_deleted: true } }
+  );
+  return res
+    .status(SUCCESS)
+    .json(successResponseHandler({ is_deleted: true }, "deleted user"));
+};
