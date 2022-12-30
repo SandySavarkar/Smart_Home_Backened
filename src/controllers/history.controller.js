@@ -1,4 +1,7 @@
-const { SUCCESS, successResponseHandle } = require("../helpers/response_json");
+const {
+  SUCCESS,
+  successResponseHandler,
+} = require("../helpers/response_json");
 const Device = require("../models/device.js");
 const History = require("../models/history");
 
@@ -99,5 +102,5 @@ exports.getHistory = async (req, res) => {
   );
   return res
     .status(SUCCESS)
-    .json(successResponseHandle(historyData, "User's All History"));
+    .json(successResponseHandler(historyData, "User's All History"));
 };

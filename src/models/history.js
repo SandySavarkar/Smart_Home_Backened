@@ -39,4 +39,4 @@ const historySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.export = mongoose.model("History", historySchema);
+module.exports = mongoose.model("History", historySchema);

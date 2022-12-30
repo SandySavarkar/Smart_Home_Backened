@@ -30,7 +30,7 @@ exports.createUser = async (req, res) => {
 };
 
 exports.getAllUser= async (req,res)=>{
-    const userData=await User.find({"is_deleted":false})
+    const userData=await User.find({"is_deleted":false}).populate("devices")
     return res
           .status(SUCCESS)
           .json(successResponseHandler(userData, "All users"));
