@@ -15,9 +15,6 @@ const userSchema =new mongoose.Schema({
     type: String,
     default:"user"
   },
-  limit:{
-    type:Number
-  },
   devices:[{type:mongoose.Schema.Types.ObjectId,ref:"Device"}],
   is_deleted:{
     type: Boolean,

@@ -1,12 +1,11 @@
 const {
-  errorResponseHandle,
   INVELID_JSON,
   SUCCESS,
   successResponseHandle,
-} = require('../helpers/responceHendler.js');
+} = require("../helpers/responceHendler.js");
 
-const Device = require('../models/device');
-const User = require('../models/users.js');
+const Device = require("../models/device");
+const User = require("../models/users.js");
 
 exports.deviceRegister = async (req, res) => {
   const serial_no_exist = await Device.find({
@@ -15,11 +14,11 @@ exports.deviceRegister = async (req, res) => {
   if (serial_no_exist.length > 0) {
     return res
       .status(INVELID_JSON)
-      .json(successResponseHandle({ message: 'Device already exist' }));
+      .json(successResponseHandle({ message: "Device already exist" }));
   }
   const insert_device_data = {
     serial_number: req.body.serial_number,
-    name: 'my device',
+    name: "my device",
   };
   const device = new Device(insert_device_data);
 
@@ -31,7 +30,7 @@ exports.deviceRegister = async (req, res) => {
     } else {
       return res
         .status(SUCCESS)
-        .json(successResponseHandle(data, 'create successfully'));
+        .json(successResponseHandle(data, "create successfully"));
     }
   });
 };
@@ -40,7 +39,7 @@ exports.getDevices = async (req, res) => {
   const deviceData = await Device.find({ is_deleted: false });
   return res
     .status(SUCCESS)
-    .json(successResponseHandle(deviceData, 'All Devices'));
+    .json(successResponseHandle(deviceData, "All Devices"));
 };
 
 exports.updateDevice = (req, res) => {
@@ -55,15 +54,15 @@ exports.updateDevice = (req, res) => {
       } else {
         return res
           .status(SUCCESS)
-          .json(successResponseHandle(data, 'Update successfully'));
+          .json(successResponseHandle(data, "Update successfully"));
       }
-    },
+    }
   );
 };
 
 exports.deleteDevice = (req, res) => {
   Device.findOneAndUpdate(
-    { _id: req.body.serial_number },
+    { serial_number: req.body.serial_number },
     { $set: { is_deleted: true } },
     function (error, data) {
       if (error) {
@@ -73,26 +72,26 @@ exports.deleteDevice = (req, res) => {
       } else {
         return res
           .status(SUCCESS)
-          .json(successResponseHandle(data, 'Delete successfully'));
+          .json(successResponseHandle(data, "Delete successfully"));
       }
-    },
+    }
   );
 };
 
-exports.updateDevicePin = data => {
-  Device.updateOne(
-    { serial_number: data.serial_number, 'pins.pinId': data.pinId },
-    { $set: { 'pins.$.status': data.value } },
+exports.updateDevicePin = async (data) => {
+  await Device.updateOne(
+    { serial_number: data.devicesId.toString(), "pins.pinId": data.pinId },
+    { $set: { "pins.$.status": data.value } }
   );
 };
 
 exports.scheduleTime = (req, res) => {
   Device.updateOne(
-    { serial_number: req.body.serial_number, 'pins.pinId': req.body.pinId },
+    { serial_number: req.body.serial_number, "pins.pinId": req.body.pinId },
     {
       $set: {
-        'pins.$.scheduleStartDateTime': req.body.scheduleStartDateTime,
-        'pins.$.scheduleStopDateTime': req.body.scheduleStopDateTime,
+        "pins.$.scheduleStartDateTime": req.body.scheduleStartDateTime,
+        "pins.$.scheduleStopDateTime": req.body.scheduleStopDateTime,
       },
     },
     function (error, data) {
@@ -103,9 +102,9 @@ exports.scheduleTime = (req, res) => {
       } else {
         return res
           .status(SUCCESS)
-          .json(successResponseHandle(data, 'Schedule update successfully'));
+          .json(successResponseHandle(data, "Schedule update successfully"));
       }
-    },
+    }
   );
 };
 
@@ -114,15 +113,15 @@ exports.getAvailableDevice = async (req, res) => {
   let newArray = [];
   if (deviceData.length > 0) {
     await Promise.all(
-      deviceData.map(async item => {
+      deviceData.map(async (item) => {
         const userData = await User.aggregate([
-          { $match: { devices: item._id.toString() } },
+          { $match: { devices: item._id } },
         ]);
         if (userData.length == 0) await newArray.push(item);
-      }),
+      })
     );
   }
   return res
     .status(SUCCESS)
-    .json(successResponseHandle(newArray, 'Available devices'));
+    .json(successResponseHandle(newArray, "Available devices"));
 };

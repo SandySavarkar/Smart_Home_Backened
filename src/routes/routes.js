@@ -7,22 +7,30 @@ const historyController = require('../controllers/history.controller');
 
 const router = express.Router();
 
-router.post('/register/device', deviceController.deviceRegister);
-router.get('/getAllDevice', deviceController.getDevices);
-router.put('/updateDevice', deviceController.updateDevice);
-router.put('/deleteDevice', deviceController.deleteDevice);
+//User Controller
 router.post('/register/user', userController.userRegister);
 router.get('/getAllUsers', userController.getUsers);
 router.get('/getMyDevice', userController.getUserDevice);
 router.put('/deleteUser', userController.deleteUser);
-router.put('/updatePin', deviceController.updateDevice);
-router.put('/scheduleTime', deviceController.scheduleTime);
-router.post('/getUserHistory', historyController.getHistory);
+router.put('/update_user/:id',userController.updateUser)
+
+
+//DeviceController
+router.post('/register/device', deviceController.deviceRegister);
+router.get('/getAllDevice', deviceController.getDevices);
+router.put('/updateDevice', deviceController.updateDevice);
+router.put('/deleteDevice', deviceController.deleteDevice);
 router.get('/availableDevices', deviceController.getAvailableDevice);
 
-router.post('/addHistory', historyController.CreateAndUpdateHistory);
+// router.put('/updateDevicePinData', deviceController.up);
+
+
+router.put('/scheduleTime', deviceController.scheduleTime);
+
+//History Controller
+router.post('/getUserHistory', historyController.getHistory);
+
 
 // router.post('/hardware/online', getHardwareOnline);
 
-// export default router;
 module.exports = router;
