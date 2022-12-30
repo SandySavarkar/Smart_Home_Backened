@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const { Server } = require('socket.io');
 const http = require('http');
+const cors = require('cors');
 const deviceController = require('./src/controllers/device.controller');
 const historyController = require('./src/controllers/history.controller');
 
@@ -15,10 +16,27 @@ const app = express();
 const PORT = 8090;
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, { cors: { origin: '*' } });
+app.use(cors());
+app.use(function (req, res, next) {
 
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 app.use(express.static('src/ui'));
 
 app.use('/api', router);
