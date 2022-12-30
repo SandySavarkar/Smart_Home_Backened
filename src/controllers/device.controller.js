@@ -179,7 +179,14 @@ exports.updateDevicePinData = (req,res) => {
               }
               console.log("timme");
 
-              io.on('connection', socket => {})
+              io.on('connection', socket => {
+
+
+
+
+
+
+              })
 
             //   updateDevicePin(data)
             //   historyController.CreateAndUpdateHistory(data)
@@ -241,4 +248,10 @@ exports.updateDevicePinData = (req,res) => {
         }
       },
     );
+  };
+
+
+  exports.getDeviceDetails = async (req, res) => {
+    const deviceData = await Device.findOne({ _id:req.params.id })
+    return res.status(SUCCESS).json(successResponseHandle(deviceData, "device data"));
   };

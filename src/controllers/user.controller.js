@@ -109,3 +109,8 @@ exports.userLogin = async (req, res) => {
       .json(successResponseHandle(user_data, "logged user"));
   };
 
+  exports.getUserDetails = async (req, res) => {
+    const userData = await User.findOne({ _id:req.params.id }).populate("devices");
+    return res.status(SUCCESS).json(successResponseHandle(userData, "user data"));
+  };
+
