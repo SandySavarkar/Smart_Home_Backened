@@ -8,7 +8,7 @@ const router = express.Router();
 //User Controller
 router.post("/register/user", userController.createUser);
 router.get('/get_users',userController.getAllUser)
-router.put('delete_user/:id',userController.deleteUser)
+router.put('/delete_user/:id',userController.deleteUser)
 
 //Device Controller
 router.post("/register/device", deviceController.createDevice);
