@@ -38,5 +38,4 @@ const deviceSchema= new mongoose.Schema({
     }
 },{timestamps:true})
 
-module.expot=mongoose.model('Device',deviceSchema)
-
+module.export=mongoose.model('Device',deviceSchema)
