@@ -42,3 +42,10 @@ exports.deleteUser= async (req,res)=>{
           .status(SUCCESS)
           .json(successResponseHandler(userData, "deleted user"));
 }
+
+exports.updateUser= async (req,res)=>{
+    const userData=await User.findOneAndUpdate({"_id":req.params.id},{$set: req.body})
+    return res
+          .status(SUCCESS)
+          .json(successResponseHandler(userData, "updated user"));
+}
