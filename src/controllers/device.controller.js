@@ -46,6 +46,7 @@ exports.updateDevice = (req, res) => {
   Device.findOneAndUpdate(
     { serial_number: req.body.serial_number },
     { $set: req.body },
+    { returnDocument: "after" },
     function (error, data) {
       if (error) {
         return res
@@ -64,6 +65,7 @@ exports.deleteDevice = (req, res) => {
   Device.findOneAndUpdate(
     { serial_number: req.body.serial_number },
     { $set: { is_deleted: true } },
+    { returnDocument: "after" },
     function (error, data) {
       if (error) {
         return res

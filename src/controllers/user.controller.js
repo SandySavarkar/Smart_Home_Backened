@@ -47,6 +47,7 @@ exports.deleteUser = (req, res) => {
   User.findOneAndUpdate(
     { _id: req.body.user_id },
     { $set: { is_deleted: true } },
+    { returnDocument: "after" },
     function (error, data) {
       if (error) {
         return res
@@ -64,7 +65,8 @@ exports.deleteUser = (req, res) => {
 exports.updateUser = async (req, res) => {
   const userData = await User.findOneAndUpdate(
     { _id: req.params.id },
-    { $set: req.body }
+    { $set: req.body },
+    { returnDocument: "after" }
   );
   return res
     .status(SUCCESS)
