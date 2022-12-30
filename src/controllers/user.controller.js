@@ -6,6 +6,7 @@ const {
 } = require("../helpers/responceHendler.js");
 
 const User = require("../models/users");
+const jwt=require("jsonwebtoken")
 
 exports.userRegister = async (req, res) => {
   const user_exist = await User.find({ email: req.body.email });
@@ -72,3 +73,34 @@ exports.updateUser = async (req, res) => {
     .status(SUCCESS)
     .json(successResponseHandle(userData, "updated user"));
 };
+
+exports.userLogin = async (req, res) => {
+    const user=await User.findOne({"email":req.body.email,"password":req.body.password})
+    if(!user) return res
+    .status(SUCCESS)
+    .json(successResponseHandle( "user not found"));
+    const token = jwt.sign({
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        type: user.type,
+        devices:user.devices
+    },
+        "this is for login token",
+        {
+            expiresIn: "50h"
+        }
+    )
+    user_data = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        type: user.type,
+        devices:user.devices,
+        token: token
+    }
+    return res
+      .status(SUCCESS)
+      .json(successResponseHandle(user_data, "logged user"));
+  };
+

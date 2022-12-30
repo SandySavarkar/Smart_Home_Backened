@@ -9,6 +9,7 @@ const router = express.Router();
 
 //User Controller
 router.post('/register/user', userController.userRegister);
+router.post('/login',userController.userLogin)
 router.get('/getAllUsers', userController.getUsers);
 router.get('/getMyDevice', userController.getUserDevice);
 router.put('/deleteUser', userController.deleteUser);
