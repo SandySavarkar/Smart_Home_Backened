@@ -82,7 +82,7 @@ exports.userLogin = async (req, res) => {
     if(req.body.type!==user.type){
         return res
         .status(401)
-        .json(successResponseHandle({"message":"You have no rights"}));
+        .json(errorResponseHandle("You have no rights",401));
     }
     const token = jwt.sign({
         userId: user._id,
