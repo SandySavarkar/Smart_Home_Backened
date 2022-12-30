@@ -1,10 +1,4 @@
-// import express from 'express';
-// import router from './src/routes/routes.js';
-// import bodyParser from 'body-parser';
-// import mongoose from 'mongoose';
-// import dotenv from 'dotenv';
-// import { Server } from 'socket.io';
-// import http from 'http';
+
 const express = require('express');
 const router = require('./src/routes/routes.js');
 const bodyParser = require('body-parser');
@@ -15,7 +9,6 @@ const http = require('http');
 const deviceController = require('./src/controllers/device.controller');
 const historyController = require('./src/controllers/history.controller');
 
-// const ngrok = require('ngrok');
 
 dotenv.config();
 const app = express();
@@ -74,5 +67,4 @@ mongoose.connect(process.env.DB_CON_STRING, { useNewUrlParser: true }, err => {
 httpServer.listen(PORT, () => {
   console.log('Running on : ', httpServer.address());
 });
-// const url=await ngrok.connect(8080)
-// console.log(url,"urll");
+
