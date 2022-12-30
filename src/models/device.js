@@ -19,7 +19,7 @@ const deviceSchema =new mongoose.Schema({
         "status":true,
         "scheduleStartDateTime":'',
         "scheduleStopDateTime":'',
-        "watt":1000,
+        "watt":10000,
         "limit":5
       },
       {
@@ -30,7 +30,7 @@ const deviceSchema =new mongoose.Schema({
         "status":true,
         "scheduleStartDateTime":'',
         "scheduleStopDateTime":'',
-        "watt":1000,
+        "watt":10000,
         "limit":5
       },
       {
@@ -41,7 +41,7 @@ const deviceSchema =new mongoose.Schema({
         "status":true,
         "scheduleStartDateTime":'',
         "scheduleStopDateTime":'',
-        "watt":1000,
+        "watt":10000,
         "limit":5
       }
     ]
