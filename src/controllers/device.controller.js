@@ -42,3 +42,10 @@ exports.deleteDevice = async (req, res) => {
       .status(SUCCESS)
       .json(successResponseHandler({ is_deleted: true }, "deleted device"));
   };
+
+  exports.usersDevice=async(req,res)=>{
+    const mydevice=await User.find({'_id':req.params.id},'devices').populate('devices')
+    return res
+    .status(SUCCESS)
+    .json(successResponseHandler(mydevice, "my devices"));
+  }
