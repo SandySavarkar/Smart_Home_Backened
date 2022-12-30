@@ -12,7 +12,7 @@ const historyController = require('./src/controllers/history.controller');
 
 dotenv.config();
 const app = express();
-const PORT = 8080;
+const PORT = 8090;
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, { cors: { origin: '*' } });
 
