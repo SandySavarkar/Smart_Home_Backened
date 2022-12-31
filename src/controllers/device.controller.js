@@ -98,7 +98,7 @@ exports.getAvailableDevice = async (req, res) => {
     await Promise.all(
       deviceData.map(async (item) => {
         const userData = await User.aggregate([
-          { $match: { devices: item._id, is_deleted: false } },
+          { $match: { devices: item._id,"is_deleted":false } },
         ]);
         if (userData.length == 0) await newArray.push(item);
       })
@@ -109,37 +109,18 @@ exports.getAvailableDevice = async (req, res) => {
     .json(successResponseHandle(newArray, "Available devices"));
 };
 
-exports.updateDevicePinData = (req, res) => {
-  let objectPass = {};
-  if (req.body.scheduleStartDateTime) {
-    objectPass["pins.$.scheduleStartDateTime"] = req.body.scheduleStartDateTime;
-  }
-  if (req.body.scheduleStopDateTime) {
-    objectPass["pins.$.scheduleStopDateTime"] = req.body.scheduleStopDateTime;
-  }
-  if (req.body.pinName) {
-    objectPass["pins.$.pinName"] = req.body.pinName;
-  }
-  if (req.body.status) {
-    objectPass["pins.$.status"] = req.body.status;
-  }
-  if (req.body.watt) {
-    objectPass["pins.$.watt"] = req.body.watt;
-  }
-  if (req.body.limit) {
-    objectPass["pins.$.limit"] = req.body.limit;
-  }
-  if (req.body.relatedManualPinName) {
-    objectPass["pins.$.relatedManualPinName"] = req.body.relatedManualPinName;
-  }
-  if (req.body.relatedManualPin) {
-    objectPass["pins.$.relatedManualPin"] = req.body.relatedManualPin;
-  }
-  Device.updateOne(
-    { serial_number: req.body.serial_number, "pins.pinId": req.body.pinId },
-    { $set: objectPass },
-    { returnDocument: "after" },
-    function (error, data) {
+
+exports.updateDevicePinData = (req,res) => {
+    let objectPass={}
+    if(req.body.scheduleStartDateTime) {objectPass['pins.$.scheduleStartDateTime']= req.body.scheduleStartDateTime}
+    if(req.body.scheduleStopDateTime) {objectPass['pins.$.scheduleStopDateTime']= req.body.scheduleStopDateTime}
+    if(req.body.pinName) {objectPass['pins.$.pinName']= req.body.pinName}
+    if(req.body.status) {objectPass['pins.$.status']= req.body.status}
+    if(req.body.watt) {objectPass['pins.$.watt']= req.body.watt}
+    if(req.body.limit) {objectPass['pins.$.limit']= req.body.limit}
+    if(req.body.relatedManualPinName) {objectPass['pins.$.relatedManualPinName']= req.body.relatedManualPinName}
+    if(req.body.relatedManualPin) {objectPass['pins.$.relatedManualPin']= req.body.relatedManualPin}
+    Device.updateOne({serial_number:req.body.serial_number,"pins.pinId":req.body.pinId}, {$set: objectPass},{ returnDocument: "after" }, function (error, data) {
       if (error) {
         return res
           .status(INVELID_JSON)
@@ -147,19 +128,21 @@ exports.updateDevicePinData = (req, res) => {
       } else {
         return res
           .status(SUCCESS)
-          .json(successResponseHandle(data, " update successfully"));
+          .json(successResponseHandle(data, ' update successfully'));
       }
-    }
-  );
-};
+    });
+  };
 
-exports.scheduleTime = (req, res) => {
-  Device.updateOne(
-    { serial_number: req.body.serial_number, "pins.pinId": req.body.pinId },
-    {
-      $set: {
-        "pins.$.scheduleStartDateTime": req.body.scheduleStartDateTime,
-        "pins.$.scheduleStopDateTime": req.body.scheduleStopDateTime,
+  
+  
+  exports.scheduleTime = (req, res) => {
+    Device.updateOne(
+      { serial_number: req.body.serial_number, 'pins.pinId': req.body.pinId },
+      {
+        $set: {
+          'pins.$.scheduleStartDateTime': req.body.scheduleStartDateTime,
+          'pins.$.scheduleStopDateTime': req.body.scheduleStopDateTime,
+        },
       },
     },
     function (error, data) {
@@ -173,23 +156,27 @@ exports.scheduleTime = (req, res) => {
           let end_time = req.body.scheduleStopDateTime;
           var fmt = "DD MM HH mm";
           var zone = "America/New_York";
-
           const formatedDate = moment(start_time).tz(zone).format(fmt);
-
-          console.log(formatedDate, "++++");
-
+          console.log(formatedDate,"++++");
           const dateArray = formatedDate.split(" ");
           const day = dateArray[0];
           const month = dateArray[1];
           const hour = dateArray[2];
           const minute = dateArray[3];
-
           console.log("m: ", formatedDate);
-
           cron.schedule(
             `${minute} ${hour} ${day} ${month} *`,
             async () => {
               console.log("schedule");
+              let data={
+                devicesId:req.body.serial_number,
+                value:false,
+                pinId:req.body.pinId
+              }
+              console.log("timme");
+
+              io.on('connection', socket => {
+
 
               let data = {
                 devicesId: parseInt(req.body.serial_number),
@@ -199,13 +186,30 @@ exports.scheduleTime = (req, res) => {
               console.log("call for update");
               ioG.sockets.emit("buttonState", data);
 
+              })
+
+            //   updateDevicePin(data)
+            //   historyController.CreateAndUpdateHistory(data)
+            //   let b=`${day+" "+ month +" "+hour+" "+ minute} `
+    //           let myDevice = await Device.findOne(
+    //             {
+    //               device_id: req.body.device_id,
+    //             },
+    //             'pins',
+    //           );
+    //   console.log(myDevice,"myyy");
+    //           myDevice = Object.values(myDevice.pins).filter(
+    //             x => x.pinId === parseInt(element.pin_Id),
+    //           );
+    //           let a=moment(myDevice[0].scheduleStartDateTime).tz(zone).format(fmt);
+    //           console.log(a,"+++",b);
+    //           console.log("start event", req.body);
               const formatedDate = moment(end_time).tz(zone).format(fmt);
               const dateArray = formatedDate.split(" ");
               const day = dateArray[0];
               const month = dateArray[1];
               const hour = dateArray[2];
               const minute = dateArray[3];
-
               //end time
               cron.schedule(
                 `${minute} ${hour} ${day} ${month} *`,
@@ -230,17 +234,20 @@ exports.scheduleTime = (req, res) => {
               timezone: "America/New_York",
             }
           );
-
+  
+  
+  
+  
+  
+  
+  
           return res
             .status(SUCCESS)
-            .json(successResponseHandle(data, "Schedule update successfully"));
-        } catch (error) {
-          console.error(error);
+            .json(successResponseHandle(data, 'Schedule update successfully'));
         }
-      }
-    }
-  );
-};
+      },
+    );
+  };
 
 exports.getDeviceDetails = async (req, res) => {
   const deviceData = await Device.findOne({ _id: req.params.id });
