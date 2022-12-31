@@ -9,6 +9,7 @@ const User = require("../models/users.js");
 const historyController = require("../controllers/history.controller");
 const moment = require("moment-timezone");
 const cron = require("node-cron");
+const { ioG } = require("../../index.js");
 
 exports.deviceRegister = async (req, res) => {
   const serial_no_exist = await Device.find({
@@ -170,7 +171,7 @@ exports.scheduleTime = (req, res) => {
         try {
           let start_time = req.body.scheduleStartDateTime;
           let end_time = req.body.scheduleStopDateTime;
-          var fmt = "DD MM hh mm";
+          var fmt = "DD MM HH mm";
           var zone = "America/New_York";
 
           const formatedDate = moment(start_time).tz(zone).format(fmt);
@@ -195,18 +196,18 @@ exports.scheduleTime = (req, res) => {
                 value: false,
                 pinId: req.body.pinId,
               };
+              console.log("call for update")
+              ioG.sockets.emit("buttonState",data);
+              
 
-              console.log("timme", data);
-
-              await crateAndUpdateHistoryFromscheduleTime(data);
-              await Device.updateOne(
-                {
-                  serial_number: data.devicesId.toString(),
-                  "pins.pinId": data.pinId,
-                },
-                { $set: { "pins.$.status": data.value } }
-              );
-
+              // await crateAndUpdateHistoryFromscheduleTime(data);
+              // await Device.updateOne(
+              //   {
+              //     serial_number: data.devicesId.toString(),
+              //     "pins.pinId": data.pinId,
+              //   },
+              //   { $set: { "pins.$.status": data.value } }
+              // );
 
               const formatedDate = moment(end_time).tz(zone).format(fmt);
               const dateArray = formatedDate.split(" ");

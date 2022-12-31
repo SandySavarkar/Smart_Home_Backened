@@ -16,6 +16,7 @@ const app = express();
 const PORT = 8090;
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, { cors: { origin: '*' } });
+exports.ioG = io;
 app.use(cors());
 app.use(function (req, res, next) {
 
@@ -40,8 +41,8 @@ app.use(bodyParser.json());
 app.use(express.static('src/ui'));
 
 app.use('/api', router);
-
 io.on('connection', socket => {
+  
   console.log('connect', socket.id);
   socket.emit('request_for_devices_id');
 
@@ -50,7 +51,7 @@ io.on('connection', socket => {
   });
 
   socket.on('buttonState', value => {
-    console.log('value: ', value);
+    console.log('value: in button state', value);
     socket.to(value.devicesId.toString()).emit('buttonState', value);
 
     deviceController.updateDevicePin(value);
