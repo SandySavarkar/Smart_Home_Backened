@@ -1,6 +1,7 @@
 // import mongoose from 'mongoose';
 const mongoose=require('mongoose')
 
+
 const deviceSchema =new mongoose.Schema({
   serial_number: {
     type: String,

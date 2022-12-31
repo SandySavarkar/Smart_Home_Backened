@@ -98,7 +98,7 @@ exports.getAvailableDevice = async (req, res) => {
     await Promise.all(
       deviceData.map(async (item) => {
         const userData = await User.aggregate([
-          { $match: { devices: item._id } },
+          { $match: { devices: item._id, is_deleted: false } },
         ]);
         if (userData.length == 0) await newArray.push(item);
       })
@@ -196,18 +196,8 @@ exports.scheduleTime = (req, res) => {
                 value: false,
                 pinId: req.body.pinId,
               };
-              console.log("call for update")
-              ioG.sockets.emit("buttonState",data);
-              
-
-              // await crateAndUpdateHistoryFromscheduleTime(data);
-              // await Device.updateOne(
-              //   {
-              //     serial_number: data.devicesId.toString(),
-              //     "pins.pinId": data.pinId,
-              //   },
-              //   { $set: { "pins.$.status": data.value } }
-              // );
+              console.log("call for update");
+              ioG.sockets.emit("buttonState", data);
 
               const formatedDate = moment(end_time).tz(zone).format(fmt);
               const dateArray = formatedDate.split(" ");
@@ -227,15 +217,6 @@ exports.scheduleTime = (req, res) => {
                   };
 
                   console.log("offtime");
-                  await crateAndUpdateHistoryFromscheduleTime(data);
-                  await Device.updateOne(
-                    {
-                      serial_number: data.devicesId.toString(),
-                      "pins.pinId": data.pinId,
-                    },
-                    { $set: { "pins.$.status": data.value } }
-                  );
-
                   console.log("end event", req.body);
                 },
                 {
@@ -261,84 +242,9 @@ exports.scheduleTime = (req, res) => {
   );
 };
 
-async function crateAndUpdateHistoryFromscheduleTime(data) {
-  console.log("function data");
-  console.log("data: ", data);
-  const deviceData = await Device.findOne({
-    serial_number: data.devicesId.toString(),
-  });
-
-  myDevice = Object.values(deviceData.pins).filter(
-    (x) => x.pinId === data.pinId
-  );
-  console.log("myDevice: ", myDevice);
-  console.log(myDevice[0].status, "status value");
-
-  if (data.value !== myDevice[0]?.status) {
-    // const userData = await User.aggregate([
-    //   { $match: { devices: deviceData._id.toString() } },
-    // ]);
-    // console.log(deviceData,"device");
-    // data['user_id'] = userData[0]._id;
-
-    data["device_id"] = deviceData._id;
-    if (data.value === false) {
-      const history = new History({
-        device_id: data.device_id,
-        // user_id: data.user_id,
-        switch_on_time: new Date(),
-        pin_Id: data.pinId,
-        switch_off_time: null,
-        defaultWattOfPin: myDevice[0].watt,
-      });
-
-      history.save();
-    } else {
-      let finalData = {};
-      const history = await History.findOne({
-        device_id: data.device_id,
-        // user_id: data.user_id,
-        pin_Id: data.pinId,
-        switch_off_time: null,
-      });
-
-      finalData["switch_off_time"] = new Date();
-
-      let difference =
-        (new Date(Date.now()).getTime() -
-          new Date(history.switch_on_time).getTime()) /
-        1000;
-      let hoursDifference = (difference / (60 * 60))?.toFixed(3);
-
-      finalData["duration"] = hoursDifference + "hr";
-
-      let myDevice = await Device.findOne(
-        {
-          _id: data.device_id,
-        },
-        "pins"
-      );
-      myDevice = Object.values(myDevice.pins).filter(
-        (x) => x.pinId === data.pinId
-      );
-
-      let watt = myDevice[0].watt == "" ? 1000 : myDevice[0].watt;
-      let totalWattPrHr = watt * hoursDifference;
-      let unit = totalWattPrHr / 1000;
-      let cost = (unit * 12)?.toFixed(4);
-
-      finalData["cost"] = cost;
-      finalData["consumptionWattPerHour"] = totalWattPrHr;
-
-      await History.updateOne(
-        {
-          device_id: data.device_id,
-          // user_id: data.user_id,
-          pin_Id: data.pinId,
-          switch_off_time: null,
-        },
-        { $set: finalData }
-      );
-    }
-  }
-}
+exports.getDeviceDetails = async (req, res) => {
+  const deviceData = await Device.findOne({ _id: req.params.id });
+  return res
+    .status(SUCCESS)
+    .json(successResponseHandle(deviceData, "device data"));
+};

@@ -14,10 +14,13 @@ router.get('/getAllUsers', userController.getUsers);
 router.get('/getMyDevice', userController.getUserDevice);
 router.put('/deleteUser', userController.deleteUser);
 router.put('/update_user/:id',userController.updateUser)
+router.get('/getMyDetails/:id', userController.getUserDetails);
+
 
 
 //DeviceController
 router.post('/register/device', deviceController.deviceRegister);
+router.get('/getDeviceDetails/:id', deviceController.getDeviceDetails);
 router.get('/getAllDevice', deviceController.getDevices);
 router.put('/updateDevice', deviceController.updateDevice);
 router.put('/deleteDevice', deviceController.deleteDevice);
